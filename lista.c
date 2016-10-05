@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "lista.h"
 
+const int LST_NO_INI=3;
 const int LST_POS_INV=4;
 
 //Retorna una nueva lista vacia.
@@ -61,6 +62,7 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 	return 1;
 }
 
+//Elimina de la lista el elemento en la posicion pasada como parametro
 int lista_eliminar(lista_t lista, unsigned int pos) {
 	//Salgo con error si la posicion no existe.
 	if(pos>=lista->cantidad_elementos) {
@@ -98,3 +100,50 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 	//retorno exito.
 	return 1;
 }
+
+//Retorna la cantidad de elementos en la lista.
+int lista_cantidad(lista_t lista) {
+	//Si la lista no esta inicializada corta la ejecucion y sale con error.
+	if(lista==NULL) {
+		exit(LST_NO_INI);
+	}
+	return lista->cantidad_elementos;
+}
+
+//Retorna el elemento en la posicion de la lista pasada como parametro.
+int lista_obtener(lista_t lista, unsigned int pos) {
+	//Si la posicion no es valida corta la ejecucion con error.
+	if(pos>lista->cantidad_elementos) {
+		exit(LST_POS_INV);
+	}
+	celda_t* celda_actual=lista->primera_celda;
+	//Recorro la lista tantas veces como indique el parametro "pos".
+	for(int i=0;i<pos;i++) {
+		celda_actual=celda_actual->proxima_celda;
+	}
+	return celda_actual->elemento[0];
+}
+
+int lista_adjuntar(lista_t lista, int elem) {
+	if(lista==NULL) {
+		exit(LST_NO_INI);
+	}
+	
+	celda_t* celda=(celda_t*)malloc(sizeof(celda_t));
+	celda->elementos[0]=elem;
+	celda->proxima_celda=NULL;
+	
+	if(lista->cantidad_elementos==0) {
+		lista->primera_celda=celda;
+	}
+	else {
+		celda_t* celda_actual=lista->primera_celda;
+		while((celda_actual->celda_siguiente)!=NULL) {
+			celda_actual=celda_actual->celda_siguiente;
+		}
+		celda_actual->celda_siguiente=celda;
+	}
+	lista->cantidad_elementos++;
+	return 1;
+}
+
