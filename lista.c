@@ -5,6 +5,8 @@
 const int LST_NO_INI=3;
 const int LST_POS_INV=4;
 
+
+
 //Retorna una nueva lista vacia.
 lista_t lista_crear() {
 	//Asigno la cantidad de memoria necesaria.

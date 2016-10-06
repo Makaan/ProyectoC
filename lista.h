@@ -1,5 +1,7 @@
+#ifndef LISTA_H_INCLUDED
+#define LISTA_H_INCLUDED
+
 typedef struct celda {
-	//PREGUNTAR
 	int elementos[4];
 	struct celda* proxima_celda;
 } celda_t;
@@ -22,3 +24,5 @@ int lista_obtener(lista_t lista, unsigned int pos);
 int lista_adjuntar(lista_t lista, int elem);
 
 int lista_destruir(lista_t* lista);
+
+#endif // LISTA_H_INCLUDED
