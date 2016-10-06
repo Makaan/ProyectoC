@@ -21,20 +21,19 @@ char* tope(pila_t pila){
 pila se encuentra vacia, aborta su ejecucion con exit status PIL_VACIA**/
 char* desapilar(pila_t* pila){
    char* aux; pila_t tofree;
-   if ((*pila)->elemento==NULL) {
-      printf("pila vacia\n");
+   if (pila_vacia(*pila)) {
       exit(PIL_VACIA);
    }
-   else {
+   else{
          aux=(*pila)->elemento;
          if ((*pila)->proximo_elemento!=NULL){
-               tofree=*pila;
-               (*pila)=(*pila)->proximo_elemento;
-               free(tofree);
+            tofree=(*pila);
+            (*pila)=(*pila)->proximo_elemento;
+            free(tofree);
          }
          (*pila)->elemento=NULL;
          return aux;
-      }
+    }
 }
 
 /**Inserta el string str en el tope de la pila. Retorna verdadero si la insercion fue exitosa,
@@ -63,7 +62,7 @@ int apilar(pila_t* pila, char* str){
 no se encuentra inicializada, finaliza la ejecucion con exit status PIL_NO_INI**/
 int pila_vacia(pila_t pila){
    if (pila!=NULL) 
-      return 0;
-   else
       return 1;
+   else
+      return 0;
 }
