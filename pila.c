@@ -42,7 +42,7 @@ exit status PIL_NO_INI**/
 int apilar(pila_t* pila, char* str){
    if(pila==NULL) {
       exit(PIL_NO_INI);
-   }  
+   }
    int toreturn=0;
    printf("antes 1 if\n");
    if (str!=NULL){
@@ -50,18 +50,17 @@ int apilar(pila_t* pila, char* str){
       pila_t nueva=(pila_t)malloc(sizeof(pila_t));
       nueva->elemento=str;
       nueva->proximo_elemento=(*pila);
-      printf("antes asignacion\n"); 
+      printf("antes asignacion\n");
       (*pila)=nueva;
       toreturn=1;
-      }
-   }
+    }
    return toreturn;
 }
 
 /**Retorna verdadero si la pila esta vacia, falso en caso contrario. Si la pila
 no se encuentra inicializada, finaliza la ejecucion con exit status PIL_NO_INI**/
 int pila_vacia(pila_t pila){
-   if (pila!=NULL) 
+   if (pila!=NULL)
       return 1;
    else
       return 0;

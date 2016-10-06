@@ -5,15 +5,16 @@ int main(){
    pila_t mipila=pila_crear();
    char* aux;
    printf("Vacia: %d\n",pila_vacia(mipila));
-   for(int i=1;i<=5;i++){
+   int i; int j;
+   for(i=1;i<=5;i++){
       scanf("%s",aux);
       if (apilar(&mipila,aux)){
           printf("%d Apilando: %s\n",i,aux);
           printf("Tope: %s\n",tope(mipila));
       }
    }
-   
-   for(int j=1;j<=6;j++){
+
+   for(j=1;j<=6;j++){
       printf("Desapilando: %s\n",desapilar(&mipila));
    }
    printf("---------------------------\n");
