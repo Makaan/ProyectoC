@@ -6,10 +6,7 @@ const int PIL_VACIA = 10;
 
 /**Retorna una pila nueva vacía**/
 pila_t  pila_crear(){
-   pila_t nueva=(pila_t)malloc(sizeof(pila_t));
-   nueva->elemento=NULL;
-   nueva->proximo_elemento=NULL;
-   return nueva;
+   return NULL;
 }
 
 /**Retorna el string que se encuentra en el tope de la pila. Si la
@@ -24,10 +21,13 @@ char* tope(pila_t pila){
 pila se encuentra vacia, aborta su ejecucion con exit status PIL_VACIA**/
 char* desapilar(pila_t* pila){
    char* aux; pila_t tofree;
-   if ((*pila)->elemento==NULL) exit(PIL_VACIA);
+   if ((*pila)->elemento==NULL) {
+      printf("pila vacia\n");
+      exit(PIL_VACIA);
+   }
    else {
          aux=(*pila)->elemento;
-         if ((*pila)->proximo_elemento=!NULL){
+         if ((*pila)->proximo_elemento!=NULL){
                tofree=*pila;
                (*pila)=(*pila)->proximo_elemento;
                free(tofree);
@@ -41,22 +41,19 @@ char* desapilar(pila_t* pila){
 falso en caso contrario. Si la pila no se encuentra inicializada, finaliza la ejecucion con
 exit status PIL_NO_INI**/
 int apilar(pila_t* pila, char* str){
+   if(pila==NULL) {
+      exit(PIL_NO_INI);
+   }  
    int toreturn=0;
-   //printf("antes 1 if\n");
-   if ( ((*pila)!=NULL) && (str!=NULL)){
-      //printf("antes 2 if\n");
-      if (pila_vacia(*pila)){
-         //printf("en 2 if\n");
-         (*pila)->elemento=str;
-         toreturn=1;
-         }
-      else{
-         //printf("en  2 else\n");
-         pila_t nueva=pila_crear();
-         nueva->elemento=str;
-         nueva->proximo_elemento=*pila;
-         (*pila)=nueva;
-         toreturn=1;
+   printf("antes 1 if\n");
+   if (str!=NULL){
+      printf("antes 2 if\n");
+      pila_t nueva=(pila_t)malloc(sizeof(pila_t));
+      nueva->elemento=str;
+      nueva->proximo_elemento=(*pila);
+      printf("antes asignacion\n"); 
+      (*pila)=nueva;
+      toreturn=1;
       }
    }
    return toreturn;
@@ -65,12 +62,8 @@ int apilar(pila_t* pila, char* str){
 /**Retorna verdadero si la pila esta vacia, falso en caso contrario. Si la pila
 no se encuentra inicializada, finaliza la ejecucion con exit status PIL_NO_INI**/
 int pila_vacia(pila_t pila){
-   if (pila!=NULL) {
-         if(pila->elemento==NULL){
-           return 1;
-         }
-         else return 0;
-   }else {
-      exit(PIL_NO_INI);
-   }
+   if (pila!=NULL) 
+      return 0;
+   else
+      return 1;
 }

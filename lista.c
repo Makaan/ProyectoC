@@ -52,12 +52,12 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 		celda_actual=celda_actual->proxima_celda;
 	}
 	int posArreglo=pos%4;
-	while(pos<lista->cantidad.elementos) {
-		for(posArreglo;posArreglo<4 && (pos<lista->cantidad.elementos);posArreglo++) {
+	while(pos<lista->cantidad_elementos) {
+		for(posArreglo;posArreglo<4 && (pos<lista->cantidad_elementos);posArreglo++) {
 			celda_actual->elementos[posArreglo]=celda_actual->elementos[posArreglo+1];
 			pos++;
 		}
-		if(pos<lista->cantidad.elementos) {
+		if(pos<lista->cantidad_elementos) {
 			celda_actual->elementos[3]=celda_actual->proxima_celda->elementos[0];
 			celda_actual=celda_actual->proxima_celda;
 			posArreglo=0;
@@ -95,22 +95,32 @@ int lista_adjuntar(lista_t lista, int elem) {
 	if(lista==NULL) {
 		exit(LST_NO_INI);
 	}
-	
-	celda_t* celda=(celda_t*)malloc(sizeof(celda_t));
-	celda->elementos[0]=elem;
-	celda->proxima_celda=NULL;
-	
-	if(lista->cantidad_elementos==0) {
-		lista->primera_celda=celda;
-	}
-	else {
-		celda_t* celda_actual=lista->primera_celda;
-		while((celda_actual->celda_siguiente)!=NULL) {
-			celda_actual=celda_actual->celda_siguiente;
+	celda_t* celda_actual=lista->primera_celda;
+	for(int i=0;i<lista->cantidad_elementos;i++) {
+		if(celda_actual->proxima_celda!=NULL) {
+			celda_actual=celda_actual->proxima_celda;
 		}
-		celda_actual->celda_siguiente=celda;
+	}
+	int posArreglo=(lista->cantidad_elementos)%4;
+	if(posArreglo==0) {
+		celda_t nueva=malloc(sizeof(celda_t));
+		celda_actual->proxima_celda=*nueva;
+		nueva.elementos[0]=elem;
 	}
 	lista->cantidad_elementos++;
 	return 1;
 }
 
+int lista_destruir(lista_t* lista) {
+	if((*lista)->primera_celda==NULL) {
+		exit(LST_NO_INI);
+	}
+	celda_t* celda=(*lista)->primera_celda;
+	destruir(celda);
+}
+
+void destruir(celda_t* celda) {
+	if(celda->proxima_celda!=NULL)
+		destruir(celda->proxima_celda);
+	free(celda);
+}

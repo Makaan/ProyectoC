@@ -5,20 +5,20 @@ int main(){
    pila_t mipila=pila_crear();
    char* aux;
    printf("Vacia: %d\n",pila_vacia(mipila));
-   for(int i=1;i<=10;i++){
+   for(int i=1;i<=5;i++){
       scanf("%s",aux);
       if (apilar(&mipila,aux)){
           printf("%d Apilando: %s\n",i,aux);
           printf("Tope: %s\n",tope(mipila));
       }
-   for(i=1;i<=10;i++){
-      printf("Desapilando: &d\n",desapilar(mipila));
    }
-
+   
+   for(int j=1;j<=6;j++){
+      printf("Desapilando: %s\n",desapilar(&mipila));
    }
    printf("---------------------------\n");
-   printf("Tope: %s\n",tope(mipila));
-   printf("Vacia: %d\n",pila_vacia(mipila));
+   //printf("Tope: %s\n",tope(mipila));
+   //printf("Vacia: %d\n",pila_vacia(mipila));
 
    return 0;
 }
