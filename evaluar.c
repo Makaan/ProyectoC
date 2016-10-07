@@ -36,7 +36,7 @@ char* eliminar_espacios(char* cadena)
    int largo=strlen(cadena);
    int i=0;
    int j=0;
-   while(i<largo){
+   while(i<largo-1){
         if (*(cadena+i)!=' ') {
             *(toreturn+j)=*(cadena+i);
             if ( !caracter_valido( *(cadena+i+1) ) ){
@@ -60,18 +60,16 @@ void apilar_cadena(char* cadena){
     int largo=strlen(cadena)-1;
     int i=0;
     int j;
-    while(i<largo){
+    while(i<largo-1){
         if ( es_numero(*(cadena+i)) ){
             j=0;
             while(es_numero(*(cadena+i))){
                 *(num+j)=*(cadena+i);
                 j++;
                 i++;
-                printf(">char=%c | >j=%d | >i=%d",*(num+j),j,i);
             }
-            printf("Num: %s\n",num);
             apilar(&mipila,num);
-            printf("Tope: %s\n",mipila);
+            printf("Tope: %s\n",tope(mipila) );
         }
         apilar(&mipila,*(cadena+i));
         printf("Tope: %s\n",mipila);
@@ -87,6 +85,9 @@ int main(int argc, char** argv){
     printf("Cadena leida: %s\n",cadena);
     cadena=eliminar_espacios(cadena);
     printf("Cadena sin espacios: %s\n",cadena);
+
+    printf("Es numero 1: %d\n",es_numero('1'));
+    printf("Es numero 9: %d\n",es_numero('9'));
     apilar_cadena(cadena);
 
     return 0;
