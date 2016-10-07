@@ -19,16 +19,22 @@ lista_t lista_crear() {
   return lista;
 }
 
-//Inserta un elemento en la lista en la posicion pasada como parametro, si la posicion es igual
-//a la cantida de elementos de la lista, se inserta al final.
+//Inserto un elemento en una posicion pasada como parametro
+//Si la posicion es mayor a la cantidad de elementos, finaliza la ejecucion con error LST_POS_INV
+//Si la posicion es igual a la cantidad de elementos, inserto al final.
 int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 	//Si la posicion es mayor que la cantidad de elementos retorna falso.
 	if(pos>lista->cantidad_elementos)
 		return 0;
 	
+	//Obtengo la celda donde debo insertar.
 	int posCelda=pos/4;
 	celda_t* celda_actual=lista->primera_celda;
-	for(int i=0;i<posCelda;i++) {
+	
+	//Recorro hasta encontrar la celda donde agregar.
+	int i=0;
+	for(i;i<posCelda;i++) {
+		//Si esa celda no existe la creo.
 		if((celda_actual->proxima_celda)==NULL) {
 			celda_t* nuevaCelda=(celda_t*)malloc(sizeof(celda_t));
 			celda_actual->proxima_celda=nuevaCelda;
@@ -54,7 +60,8 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 	}
 	int posCelda=pos/4;
 	celda_t* celda_actual=lista->primera_celda;
-	for(int i=0;i<posCelda;i++) {
+	int i=0;
+	for(i;i<posCelda;i++) {
 		celda_actual=celda_actual->proxima_celda;
 	}
 	int posArreglo=pos%4;
@@ -91,7 +98,8 @@ int lista_obtener(lista_t lista, unsigned int pos) {
 	}
 	celda_t* celda_actual=lista->primera_celda;
 	//Recorro la lista tantas veces como indique el parametro "pos".
-	for(int i=0;i<pos/4;i++) {
+	int i=0;
+	for(i;i<pos/4;i++) {
 		celda_actual=celda_actual->proxima_celda;
 	}
 	return celda_actual->elementos[pos%4];
