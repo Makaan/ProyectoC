@@ -109,7 +109,7 @@ int lista_obtener(lista_t lista, unsigned int pos) {
 	celda_t* celda_actual=lista->primera_celda;
 	//Recorro la lista tantas veces como indique el parametro "pos".
 	int i=0;
-	for(int i=0;i<pos/4;i++) {
+	for(i;i<pos/4;i++) {
 		celda_actual=celda_actual->proxima_celda;
 	}
 	return celda_actual->elementos[pos%4];
