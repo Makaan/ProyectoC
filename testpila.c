@@ -6,23 +6,27 @@ int main(){
    char* aux;
    printf("Vacia? %d\n",pila_vacia(mipila));
    int i; int j;
-   for(i=1;i<=5;i++){
-      scanf("%s",aux);
-      if (apilar(&mipila,aux)){
-          printf("(%d) Apilando: %s. ",i,aux);
-          printf("Tope: %s\n",tope(mipila));
-      }
-   }
-    printf("---------------------------\n");printf("---------------------------\n");
+
+   apilar(&mipila,"1");
+   printf("Tope: %s\n",tope(mipila));
+   apilar(&mipila,"2");
+   printf("Tope: %s\n",tope(mipila));
+   apilar(&mipila,"3");
+   printf("Tope: %s\n",tope(mipila));
+   apilar(&mipila,"4");
+   printf("Tope: %s\n",tope(mipila));
+   apilar(&mipila,"5");
+   printf("Tope: %s\n",tope(mipila));
+
+   printf("---------------------------\n");
+   printf("---------------------------\n");
    for(j=1;j<=10;j++){
       aux=desapilar(&mipila);
       printf("Desapilo: %s\n",aux);
-      printf("Tope: %s\n",tope(mipila));
    }
    printf("---------------------------\n");
-   //printf("Tope: %s\n",tope(mipila));
-   //printf("Vacia: %d\n",pila_vacia(mipila));
-
+   printf("Vacia? %d\n",pila_vacia(mipila));
    return 0;
 }
+
 
