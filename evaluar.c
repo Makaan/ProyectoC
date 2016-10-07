@@ -8,7 +8,13 @@
 
 #define CADENA_MAX 512
 
-int es_numero(char caracter){
+const int EXP_MALF=2;
+const int OPND_DEMAS=5;
+const int OPND_INSUF=6;
+const int OPND_INV=7;
+const int OPRD_INV=8;
+
+int es_digito(char caracter){
     int toreturn=0;
     switch(caracter){
         case '0'...'9': toreturn=1;
@@ -16,27 +22,28 @@ int es_numero(char caracter){
     return toreturn;
 }
 
-int caracter_valido(char caracter){
+int operador_valido(char caracter){
     int toreturn=0;
     switch(caracter){
-        case '0'...'9': toreturn=1;
         case '+': toreturn=1;
         case '-': toreturn=1;
         case '*': toreturn=1;
         case '/': toreturn=1;
-        case '(': toreturn=1;
-        case ')': toreturn=1;
     }
     return toreturn;
 }
 
+/*
 char* eliminar_espacios(char* cadena)
 {
    char* toreturn=malloc(CADENA_MAX);
    int largo=strlen(cadena);
    int i=0;
    int j=0;
+
    while(i<largo-1){
+
+
         if (*(cadena+i)!=' ') {
             *(toreturn+j)=*(cadena+i);
             if ( !caracter_valido( *(cadena+i+1) ) ){
@@ -49,32 +56,61 @@ char* eliminar_espacios(char* cadena)
    }
    return toreturn;
 }
+*/
 
-void apilar_cadena(char* cadena){
-    printf("\nCadena que voy a apilar: %s\n",cadena);
+char* obtener_cadena(char caracter){
+    return &caracter;
+}
+
+pila_t apilar_cadena(char* cadena){
 
     pila_t mipila=pila_crear();
 
-    char car;
     char* num=malloc(CADENA_MAX);
-    int largo=strlen(cadena)-1;
+    int largo=strlen(cadena);
     int i=0;
     int j;
+    int cont_parentesis=0;
     while(i<largo-1){
-        if ( es_numero(*(cadena+i)) ){
-            j=0;
-            while(es_numero(*(cadena+i))){
-                *(num+j)=*(cadena+i);
-                j++;
-                i++;
-            }
-            apilar(&mipila,num);
-            printf("Tope: %s\n",tope(mipila) );
+        if(*(cadena+i)=='(') {
+            cont_parentesis++;
         }
-        apilar(&mipila,*(cadena+i));
-        printf("Tope: %s\n",mipila);
-        i++;
+        if(*(cadena+i)==')') {
+            cont_parentesis--;
+        }
+
+        //Si no es espacio...
+        if (*(cadena+i)!=' '){
+
+            //Si es un digito...
+            if ( es_digito(*(cadena+i)) ){
+                //Debo hacer malloc para evitar que los numeros queden con los ultimos digitos del numero anterior calculado
+                char* num=malloc(CADENA_MAX);
+                j=0;
+                //Mientras sea digito lo guardo en una string aux
+                while(es_digito(*(cadena+i))){
+                    *(num+j)=*(cadena+i);
+                    j++;
+                    i++;
+                }
+                //Apilo el numero
+                apilar(&mipila,num);
+            }
+            else{
+                 //Apilo el caracter que no es numero
+                 apilar(&mipila, obtener_cadena(*(cadena+i)));
+                 i++;
+            }
+            printf(">Tope: %s\n", tope(mipila) );
+        }
+        else{
+            //Aumento i cuando el caracter es un espacio
+            i++;
+        }
     }
+    if(cont_parentesis!=0)
+        exit(EXP_MALF);
+    return mipila;
 }
 
 
@@ -83,12 +119,17 @@ int main(int argc, char** argv){
     fgets (cadena, CADENA_MAX, stdin);
 
     printf("Cadena leida: %s\n",cadena);
-    cadena=eliminar_espacios(cadena);
-    printf("Cadena sin espacios: %s\n",cadena);
+    printf("------------------------------ \n");
+    printf("-------Empiezo-a-apilar------- \n");
+    printf("------------------------------ \n");
+    pila_t mipila=apilar_cadena(cadena);
 
-    printf("Es numero 1: %d\n",es_numero('1'));
-    printf("Es numero 9: %d\n",es_numero('9'));
-    apilar_cadena(cadena);
+    printf("------------------------------ \n");
+    printf("------Empiezo-a-desapilar----- \n");
+    printf("------------------------------ \n");
+    while(!pila_vacia(mipila)){
+        printf(">Desapilo: %s\n",desapilar(&mipila));
+    }
 
     return 0;
 }
