@@ -1,11 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "pila.h"
 #include "pila.c"
+
 int main(){
    pila_t mipila=pila_crear();
    char* aux;
    printf("Vacia? %d\n",pila_vacia(mipila));
-   int i; int j;
+   int j;
 
    apilar(&mipila,"1");
    printf("Tope: %s\n",tope(mipila));
