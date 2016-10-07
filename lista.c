@@ -35,9 +35,13 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 		}
 		celda_actual=celda_actual->proxima_celda;
 	}
+	
 	int posArreglo=pos%4;
+	if(pos==(lista->cantidad_elementos))
+		lista->cantidad_elementos++;
+		
 	celda_actual->elementos[posArreglo]=elem;
-	lista->cantidad_elementos++;
+	
 	
 	return 1;
 }
@@ -82,7 +86,7 @@ int lista_cantidad(lista_t lista) {
 //Retorna el elemento en la posicion de la lista pasada como parametro.
 int lista_obtener(lista_t lista, unsigned int pos) {
 	//Si la posicion no es valida corta la ejecucion con error.
-	if(pos>lista->cantidad_elementos) {
+	if(pos>(lista->cantidad_elementos-1)) {
 		exit(LST_POS_INV);
 	}
 	celda_t* celda_actual=lista->primera_celda;
@@ -94,23 +98,8 @@ int lista_obtener(lista_t lista, unsigned int pos) {
 }
 
 int lista_adjuntar(lista_t lista, int elem) {
-	if(lista==NULL) {
-		exit(LST_NO_INI);
-	}
-	celda_t* celda_actual=lista->primera_celda;
-	for(int i=0;i<lista->cantidad_elementos;i++) {
-		if(celda_actual->proxima_celda!=NULL) {
-			celda_actual=celda_actual->proxima_celda;
-		}
-	}
-	int posArreglo=(lista->cantidad_elementos)%4;
-	if(posArreglo==0) {
-		celda_t* nueva=(celda_t*)malloc(sizeof(celda_t));
-		celda_actual->proxima_celda=nueva;
-		nueva->elementos[0]=elem;
-	}
-	lista->cantidad_elementos++;
-	return 1;
+	int to_return=lista_insertar(lista,(lista->cantidad_elementos),elem);
+	return to_return;
 }
 
 void destruir(celda_t* celda) {
@@ -125,5 +114,6 @@ int lista_destruir(lista_t* lista) {
 	}
 	celda_t* celda=(*lista)->primera_celda;
 	destruir(celda);
+	*lista=NULL;
 	return 1;
 }
