@@ -82,13 +82,12 @@ char* eliminar_espacios(char* cadena)
 
 char* obtener_cadena(char caracter){
     char* cadena=malloc(CADENA_MAX);
-    printf(">>>EN OBTENER_CADENA EL CARACTER ES: %c\n", caracter);
     if (caracter=='+') cadena="+";
-    if (caracter=='+') cadena="-";
-    if (caracter=='+') cadena="*";
-    if (caracter=='+') cadena="/";
-    if (caracter=='+') cadena=")";
-    if (caracter=='+') cadena="(";
+    if (caracter=='-') cadena="-";
+    if (caracter=='*') cadena="*";
+    if (caracter=='/') cadena="/";
+    if (caracter==')') cadena=")";
+    if (caracter=='(') cadena="(";
     return cadena;
 }
 
@@ -97,22 +96,25 @@ int suma(lista_t lista){
     int i;
     int cant=lista_cantidad(lista);
     if (cant<2) exit(OPND_INSUF);
+
     for (i=0;i<cant;i++){
         resultado=resultado+lista_obtener(lista,i);
     }
-    lista_destruir(lista);
+    lista_destruir(&lista);
+
     return resultado;
 }
 
 int producto(lista_t lista){
-    int resultado=0;
+    int resultado=1;
     int i;
     int cant=lista_cantidad(lista);
     if (cant<2) exit(OPND_INSUF);
     for (i=0;i<cant;i++){
         resultado=resultado*lista_obtener(lista,i);
+        printf("Producto> RES=%d Lista(i)=%d\n",resultado,lista_obtener(lista,i));
     }
-    lista_destruir(lista);
+    lista_destruir(&lista);
     return resultado;
 }
 
@@ -123,8 +125,8 @@ int resta(lista_t lista){
     if (cant<2) exit(OPND_INSUF);
     if (cant>2) exit(OPND_DEMAS);
 
-    resultado=lista_obtener(lista,1)-lista_obtener(lista,0);
-    lista_destruir(lista);
+    resultado=lista_obtener(lista,0)-lista_obtener(lista,1);
+    lista_destruir(&lista);
     return resultado;
 }
 
@@ -135,13 +137,107 @@ int division(lista_t lista){
     if (cant<2) exit(OPND_INSUF);
     if (cant>2) exit(OPND_DEMAS);
 
-    resultado=lista_obtener(lista,1)/lista_obtener(lista,0);
-    lista_destruir(lista);
+    resultado=lista_obtener(lista,0)/lista_obtener(lista,1);
+    lista_destruir(&lista);
     return resultado;
 }
 
+int desapilar_y_evaluar(pila_t pila){
 
+    char* caracter=malloc(CADENA_MAX);
+    char* caracter_aux=malloc(CADENA_MAX);
 
+    int resultado=0;
+
+    pila_t pila_aux=pila_crear();
+
+    while(!pila_vacia(pila)){
+        printf(">tope pila=%s\n",tope(pila));
+
+        caracter=desapilar(&pila);
+        if ((caracter!="+") &&(caracter!="*")&&(caracter!="-")&&(caracter!="/")){
+            printf("Apilo caracter: %s\n",caracter);
+            apilar(&pila_aux,caracter);
+        }
+        else{
+            if (tope(pila_aux)==")") exit(OPND_INSUF);
+            lista_t milista=lista_crear();
+            while(tope(pila_aux)!=")"){
+                caracter_aux=desapilar(&pila_aux);
+                int num=atoi(caracter_aux);
+                lista_adjuntar(milista,num);
+            }
+            desapilar(&pila_aux);
+            if (caracter=="+") resultado=suma(milista);
+            if (caracter=="*") resultado=producto(milista);
+            if (caracter=="/") resultado=division(milista);
+            if (caracter=="-") resultado=resta(milista);
+
+            char* res_cadena=itoa(resultado,res_cadena);
+            printf("Resultado parcial: %d\n",resultado);
+            apilar(&pila_aux,res_cadena);
+            printf("Res_Cadena: %s\n",res_cadena);
+            desapilar(&pila);
+        }
+
+    }
+
+    printf(">tope final pila_aux=%s\n",tope(pila_aux));
+
+    int toreturn=atoi(tope(pila_aux));
+    return toreturn;
+}
+
+/*void desapilar_y_evaluar2(pila_t mipila){
+
+    printf("********Comienzo**a**evaluar*******\n\n");
+
+    char* caracter=malloc(CADENA_MAX);
+
+    int resultado=0;
+
+    caracter=desapilar(&mipila);
+    printf(">Antes primer while. Desapile. Caracter=%s\n",caracter);
+
+    if (caracter==")"){
+
+        caracter=desapilar(&mipila);
+
+        if (caracter==")"){
+            desapilar_y_evaluar(mipila);
+        }
+        else{
+            while ( ((!pila_vacia(mipila)) || (caracter!="(")) ) {
+                printf(">Primer while. Desapile. Caracter=%s. Creo lista.\n",caracter);
+                lista_t milista=lista_crear();
+                while ( (caracter!="(") && (caracter!=")") && (caracter!="+") &&(caracter!="*")&&(caracter!="-")&&(caracter!="/")){
+                    printf(">Seg while. Caracter=%s\n",caracter);
+                    int num=atoi(caracter);
+                    printf(">Seg while. Converti a Int. Num=%d \n",num);
+                    lista_adjuntar(milista,num);
+                    printf(">Seg while. Enliste Num=%d \n",num);
+                    caracter=desapilar(&mipila);
+                    printf(">Seg while. Desapile: Caracter=%s \n",caracter);
+                }
+                printf(">Primer while. Antes de Switch. Caracter (deberia ser operador)=%s \n",caracter);
+                if (caracter=="+")resultado=suma(milista);
+                if (caracter=="*") resultado=producto(milista);
+                if (caracter=="/") resultado=division(milista);
+                if (caracter=="-") resultado=resta(milista);
+                printf(">Primer while. Despues de Switch.\n\n ||||||||||||||||||||||Resultado:%d||||||||||||||||||\n\n",resultado);
+                caracter=desapilar(&mipila);
+                printf(">Primer while. Despues de resultado. Desapile: Caracter[deberia ser '(']= %s \n",caracter);
+                char* res_cadena=itoa(resultado,res_cadena);
+                printf(">Primer while. Despues de ITOA. Res Cadena=%s \n",res_cadena);
+                apilar(&mipila,res_cadena);
+                printf(">Apile. Res-Cadena=%s | Cadena=%s \n",res_cadena,caracter);
+                }
+            }
+    }
+
+}
+
+*/
 
 void apilar_cadena(char* cadena){
 
@@ -185,9 +281,7 @@ void apilar_cadena(char* cadena){
                  //Apilo el caracter valido que no es numero
                  if (caracter_valido(*(cadena+i))){
                     char c=(*(cadena+i));
-                    printf("> Caracter es %c\n",c);
-                    printf("> &Caracter es %s\n",&c);
-                    apilar(&mipila,&c);
+                    apilar(&mipila,obtener_cadena(c));
                     i++;
                  }else
                     exit (OPRD_INV);
@@ -202,48 +296,9 @@ void apilar_cadena(char* cadena){
     }
     if(cont_parentesis!=0) exit(EXP_MALF);
 
-    printf("********Comienzo**a**evaluar*******\n\n");
-    char* caracter=malloc(CADENA_MAX);
+    int resultado=desapilar_y_evaluar(mipila);
 
-    while (!pila_vacia(mipila)){
-        printf("\n>Tope: -%s-\n", tope(mipila) );
-        caracter=desapilar(&mipila);
-        printf(">>Desapile caracter: -%s-\n",caracter);
-    }
-
-
-    if (caracter==")"){
-
-        while(!pila_vacia(mipila)){
-
-            caracter=desapilar(&mipila);
-
-            lista_t milista=lista_crear();
-
-            while ( (caracter!="(") && (caracter!=")") && (caracter!="+") &&(caracter!="*")&&(caracter!="-")&&(caracter!="/")){
-
-                int num=atoi(caracter);
-                lista_adjuntar(milista,num);
-                caracter=desapilar(&mipila);
-            }
-            int resultado=0;
-            switch (*caracter){
-                case '+': resultado=suma(milista);
-                case '*': resultado=producto(milista);
-                case '/': resultado=division(milista);
-                case '-': resultado=resta(milista);
-            }
-            char* res_cadena;
-            printf("\nResultado: %d\n",resultado);
-            itoa(resultado,&res_cadena);
-            apilar(&mipila,res_cadena);
-
-        }
-
-    }
-
-
-
+    printf("@@@@@@@@ RESULTADO = %d @@@@@@@@@",resultado);
 }
 
 
@@ -252,9 +307,6 @@ int main(int argc, char** argv){
     fgets (cadena, CADENA_MAX, stdin);
 
     printf("Cadena leida: %s\n",cadena);
-    printf("------------------------------ \n");
-    printf("-------Empiezo-a-apilar------- \n");
-    printf("------------------------------ \n");
 
     apilar_cadena(cadena);
     return 0;
