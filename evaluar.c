@@ -14,6 +14,26 @@ const int OPND_INSUF=6;
 const int OPND_INV=7;
 const int OPRD_INV=8;
 
+char* itoa(int i, char b[]){
+    char const digit[] = "0123456789";
+    char* p = b;
+    if(i<0){
+        *p++ = '-';
+        i *= -1;
+    }
+    int shifter = i;
+    do{ //Move to where representation ends
+        ++p;
+        shifter = shifter/10;
+    }while(shifter);
+    *p = '\0';
+    do{ //Move back, inserting digits as u go
+        *--p = digit[i%10];
+        i = i/10;
+    }while(i);
+    return b;
+}
+
 int es_digito(char caracter){
     int toreturn=0;
     switch(caracter){
@@ -22,13 +42,15 @@ int es_digito(char caracter){
     return toreturn;
 }
 
-int operador_valido(char caracter){
+int caracter_valido(char caracter){
     int toreturn=0;
     switch(caracter){
         case '+': toreturn=1;
         case '-': toreturn=1;
         case '*': toreturn=1;
         case '/': toreturn=1;
+        case ')': toreturn=1;
+        case '(': toreturn=1;
     }
     return toreturn;
 }
@@ -59,10 +81,69 @@ char* eliminar_espacios(char* cadena)
 */
 
 char* obtener_cadena(char caracter){
-    return &caracter;
+    char* cadena=malloc(CADENA_MAX);
+    printf(">>>EN OBTENER_CADENA EL CARACTER ES: %c\n", caracter);
+    if (caracter=='+') cadena="+";
+    if (caracter=='+') cadena="-";
+    if (caracter=='+') cadena="*";
+    if (caracter=='+') cadena="/";
+    if (caracter=='+') cadena=")";
+    if (caracter=='+') cadena="(";
+    return cadena;
 }
 
-pila_t apilar_cadena(char* cadena){
+int suma(lista_t lista){
+    int resultado=0;
+    int i;
+    int cant=lista_cantidad(lista);
+    if (cant<2) exit(OPND_INSUF);
+    for (i=0;i<cant;i++){
+        resultado=resultado+lista_obtener(lista,i);
+    }
+    lista_destruir(lista);
+    return resultado;
+}
+
+int producto(lista_t lista){
+    int resultado=0;
+    int i;
+    int cant=lista_cantidad(lista);
+    if (cant<2) exit(OPND_INSUF);
+    for (i=0;i<cant;i++){
+        resultado=resultado*lista_obtener(lista,i);
+    }
+    lista_destruir(lista);
+    return resultado;
+}
+
+int resta(lista_t lista){
+    int resultado=0;
+    int i;
+    int cant=lista_cantidad(lista);
+    if (cant<2) exit(OPND_INSUF);
+    if (cant>2) exit(OPND_DEMAS);
+
+    resultado=lista_obtener(lista,1)-lista_obtener(lista,0);
+    lista_destruir(lista);
+    return resultado;
+}
+
+int division(lista_t lista){
+    int resultado=0;
+    int i;
+    int cant=lista_cantidad(lista);
+    if (cant<2) exit(OPND_INSUF);
+    if (cant>2) exit(OPND_DEMAS);
+
+    resultado=lista_obtener(lista,1)/lista_obtener(lista,0);
+    lista_destruir(lista);
+    return resultado;
+}
+
+
+
+
+void apilar_cadena(char* cadena){
 
     pila_t mipila=pila_crear();
 
@@ -71,6 +152,7 @@ pila_t apilar_cadena(char* cadena){
     int i=0;
     int j;
     int cont_parentesis=0;
+
     while(i<largo-1){
         if(*(cadena+i)=='(') {
             cont_parentesis++;
@@ -93,24 +175,75 @@ pila_t apilar_cadena(char* cadena){
                     j++;
                     i++;
                 }
+                //Si se introduce un numero no entreo (con coma o punto) sale con error
+                if ( (*(cadena+i)=='.')||(*(cadena+i)==',') )
+                    exit (OPND_INV);
                 //Apilo el numero
                 apilar(&mipila,num);
             }
             else{
-                 //Apilo el caracter que no es numero
-                 apilar(&mipila, obtener_cadena(*(cadena+i)));
-                 i++;
+                 //Apilo el caracter valido que no es numero
+                 if (caracter_valido(*(cadena+i))){
+                    char c=(*(cadena+i));
+                    printf("> Caracter es %c\n",c);
+                    printf("> &Caracter es %s\n",&c);
+                    apilar(&mipila,&c);
+                    i++;
+                 }else
+                    exit (OPRD_INV);
+
             }
-            printf(">Tope: %s\n", tope(mipila) );
+            printf("\n>Tope: %s\n", tope(mipila) );
         }
         else{
             //Aumento i cuando el caracter es un espacio
             i++;
         }
     }
-    if(cont_parentesis!=0)
-        exit(EXP_MALF);
-    return mipila;
+    if(cont_parentesis!=0) exit(EXP_MALF);
+
+    printf("********Comienzo**a**evaluar*******\n\n");
+    char* caracter=malloc(CADENA_MAX);
+
+    while (!pila_vacia(mipila)){
+        printf("\n>Tope: -%s-\n", tope(mipila) );
+        caracter=desapilar(&mipila);
+        printf(">>Desapile caracter: -%s-\n",caracter);
+    }
+
+
+    if (caracter==")"){
+
+        while(!pila_vacia(mipila)){
+
+            caracter=desapilar(&mipila);
+
+            lista_t milista=lista_crear();
+
+            while ( (caracter!="(") && (caracter!=")") && (caracter!="+") &&(caracter!="*")&&(caracter!="-")&&(caracter!="/")){
+
+                int num=atoi(caracter);
+                lista_adjuntar(milista,num);
+                caracter=desapilar(&mipila);
+            }
+            int resultado=0;
+            switch (*caracter){
+                case '+': resultado=suma(milista);
+                case '*': resultado=producto(milista);
+                case '/': resultado=division(milista);
+                case '-': resultado=resta(milista);
+            }
+            char* res_cadena;
+            printf("\nResultado: %d\n",resultado);
+            itoa(resultado,&res_cadena);
+            apilar(&mipila,res_cadena);
+
+        }
+
+    }
+
+
+
 }
 
 
@@ -122,14 +255,7 @@ int main(int argc, char** argv){
     printf("------------------------------ \n");
     printf("-------Empiezo-a-apilar------- \n");
     printf("------------------------------ \n");
-    pila_t mipila=apilar_cadena(cadena);
 
-    printf("------------------------------ \n");
-    printf("------Empiezo-a-desapilar----- \n");
-    printf("------------------------------ \n");
-    while(!pila_vacia(mipila)){
-        printf(">Desapilo: %s\n",desapilar(&mipila));
-    }
-
+    apilar_cadena(cadena);
     return 0;
 }
