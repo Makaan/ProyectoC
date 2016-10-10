@@ -26,14 +26,14 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 	//Si la posicion es mayor que la cantidad de elementos retorna falso.
 	if(pos>lista->cantidad_elementos)
 		return 0;
-	
+
 	//Obtengo la celda donde debo insertar.
 	int posCelda=pos/4;
 	celda_t* celda_actual=lista->primera_celda;
-	
+
 	//Recorro hasta encontrar la celda donde agregar.
-	int i=0;
-	for(i;i<posCelda;i++) {
+	int i;
+	for(i=0;i<posCelda;i++) {
 		//Si esa celda no existe la creo.
 		if((celda_actual->proxima_celda)==NULL) {
 			celda_t* nuevaCelda=(celda_t*)malloc(sizeof(celda_t));
@@ -41,14 +41,14 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 		}
 		celda_actual=celda_actual->proxima_celda;
 	}
-	
+
 	int posArreglo=pos%4;
 	if(pos==(lista->cantidad_elementos))
 		lista->cantidad_elementos++;
-		
+
 	celda_actual->elementos[posArreglo]=elem;
-	
-	
+
+
 	return 1;
 }
 
@@ -62,14 +62,14 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 	//Obtengo la celda donde voy a eliminar
 	int posCelda=pos/4;
 	celda_t* celda_actual=lista->primera_celda;
-	int i=0;
+	int i;
 	//Recorro hasta llegar a esa celda
-	for(i;i<posCelda;i++) {
+	for(i=0;i<posCelda;i++) {
 		celda_actual=celda_actual->proxima_celda;
 	}
 	//Obtengo la posicion del arreglo de esa celda donde eliminar.
 	int posArreglo=pos%4;
-	
+
 	//Acomodo todos los elementos restantes del arreglo para cerrar el espacio creado por elemento eliminado.
 	while(pos<lista->cantidad_elementos) {
 		//Muevo cada elemento i+1 al i en el arreglo de la celda.
@@ -86,7 +86,7 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 	}
 	lista->cantidad_elementos--;
 	return 1;
-	
+
 }
 
 //Retorna la cantidad de elementos de la lista.
@@ -100,7 +100,7 @@ int lista_cantidad(lista_t lista) {
 }
 
 //Retorna el elemento en la posicion pasada como parametro
-//Si la posicion es mayor a la cantidad de elementos de la lista finaliza la ejecucion con error LST_POS_INV 
+//Si la posicion es mayor a la cantidad de elementos de la lista finaliza la ejecucion con error LST_POS_INV
 int lista_obtener(lista_t lista, unsigned int pos) {
 	//Si la posicion no es valida corta la ejecucion con error.
 	if(pos>(lista->cantidad_elementos-1)) {
@@ -108,8 +108,8 @@ int lista_obtener(lista_t lista, unsigned int pos) {
 	}
 	celda_t* celda_actual=lista->primera_celda;
 	//Recorro la lista tantas veces como indique el parametro "pos".
-	int i=0;
-	for(i;i<pos/4;i++) {
+	int i;
+	for(i=0;i<pos/4;i++) {
 		celda_actual=celda_actual->proxima_celda;
 	}
 	return celda_actual->elementos[pos%4];

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 #include "lista.h"
 #include "pila.h"
 #include "lista.c"
@@ -14,6 +15,8 @@ const int OPND_INSUF=6;
 const int OPND_INV=7;
 const int OPRD_INV=8;
 
+
+//Codigo obtenido de: http://stackoverflow.com/a/9660930"
 char* itoa(int i, char b[]){
     char const digit[] = "0123456789";
     char* p = b;
@@ -55,30 +58,6 @@ int caracter_valido(char caracter){
     return toreturn;
 }
 
-/*
-char* eliminar_espacios(char* cadena)
-{
-   char* toreturn=malloc(CADENA_MAX);
-   int largo=strlen(cadena);
-   int i=0;
-   int j=0;
-
-   while(i<largo-1){
-
-
-        if (*(cadena+i)!=' ') {
-            *(toreturn+j)=*(cadena+i);
-            if ( !caracter_valido( *(cadena+i+1) ) ){
-                *(toreturn+j+1)=' ';
-                j++;
-            }
-            j++;
-        }
-        i++;
-   }
-   return toreturn;
-}
-*/
 
 char* obtener_cadena(char caracter){
     char* cadena=malloc(CADENA_MAX);
@@ -112,7 +91,6 @@ int producto(lista_t lista){
     if (cant<2) exit(OPND_INSUF);
     for (i=0;i<cant;i++){
         resultado=resultado*lista_obtener(lista,i);
-        printf("Producto> RES=%d Lista(i)=%d\n",resultado,lista_obtener(lista,i));
     }
     lista_destruir(&lista);
     return resultado;
@@ -120,7 +98,6 @@ int producto(lista_t lista){
 
 int resta(lista_t lista){
     int resultado=0;
-    int i;
     int cant=lista_cantidad(lista);
     if (cant<2) exit(OPND_INSUF);
     if (cant>2) exit(OPND_DEMAS);
@@ -132,7 +109,6 @@ int resta(lista_t lista){
 
 int division(lista_t lista){
     int resultado=0;
-    int i;
     int cant=lista_cantidad(lista);
     if (cant<2) exit(OPND_INSUF);
     if (cant>2) exit(OPND_DEMAS);
@@ -144,6 +120,8 @@ int division(lista_t lista){
 
 int desapilar_y_evaluar(pila_t pila){
 
+    //printf("Entro a desapilar y evaluar\n");
+
     char* caracter=malloc(CADENA_MAX);
     char* caracter_aux=malloc(CADENA_MAX);
 
@@ -152,98 +130,66 @@ int desapilar_y_evaluar(pila_t pila){
     pila_t pila_aux=pila_crear();
 
     while(!pila_vacia(pila)){
-        printf(">tope pila=%s\n",tope(pila));
 
+        //printf("Entro a While\n");
         caracter=desapilar(&pila);
         if ((caracter!="+") &&(caracter!="*")&&(caracter!="-")&&(caracter!="/")){
-            printf("Apilo caracter: %s\n",caracter);
-            apilar(&pila_aux,caracter);
+            //printf("Antes de apilar en pila_aux|Caracter=%s\n",caracter);
+            if (caracter=="(") {
+                //printf("Entre al if '('\n");
+                caracter_aux=desapilar(&pila_aux);
+                //printf("En if '(' caracter_aux=%s\n",caracter_aux);
+                if (tope(pila_aux)==")"){
+                    //printf("En if '(' tope(pila_aux)=%s\n",tope(pila_aux));
+                    desapilar(&pila_aux);
+                    apilar(&pila_aux,caracter_aux);
+                }
+                else{
+                    exit(OPRD_INV);
+                }
+            }
+            else{
+                apilar(&pila_aux,caracter);
+            }
         }
         else{
+            //printf("\nCaracter=%s | Caracter_aux=%s\n\n",caracter,caracter_aux);
             if (tope(pila_aux)==")") exit(OPND_INSUF);
             lista_t milista=lista_crear();
             while(tope(pila_aux)!=")"){
+
                 caracter_aux=desapilar(&pila_aux);
                 int num=atoi(caracter_aux);
                 lista_adjuntar(milista,num);
+                //printf("\n>En while listar| Caracter=%s | Caracter_aux=%s\n\n",caracter,caracter_aux);
             }
+
+            //printf("Antes de desapilar pila_aux|Caracter_aux=%s\n",caracter_aux);
             desapilar(&pila_aux);
+
             if (caracter=="+") resultado=suma(milista);
             if (caracter=="*") resultado=producto(milista);
             if (caracter=="/") resultado=division(milista);
             if (caracter=="-") resultado=resta(milista);
 
-            char* res_cadena=itoa(resultado,res_cadena);
-            printf("Resultado parcial: %d\n",resultado);
-            apilar(&pila_aux,res_cadena);
-            printf("Res_Cadena: %s\n",res_cadena);
+            char* resultado_aux=malloc(CADENA_MAX);
+            resultado_aux=itoa(resultado,resultado_aux);
+            //printf("En else | Despues de itoa | Resultado_aux=%s\n",resultado_aux);
+
+            apilar(&pila_aux,resultado_aux);
             desapilar(&pila);
         }
 
     }
-
-    printf(">tope final pila_aux=%s\n",tope(pila_aux));
-
+    //printf(">Tope(pila_aux) al final=%s\n",tope(pila_aux));
     int toreturn=atoi(tope(pila_aux));
     return toreturn;
 }
-
-/*void desapilar_y_evaluar2(pila_t mipila){
-
-    printf("********Comienzo**a**evaluar*******\n\n");
-
-    char* caracter=malloc(CADENA_MAX);
-
-    int resultado=0;
-
-    caracter=desapilar(&mipila);
-    printf(">Antes primer while. Desapile. Caracter=%s\n",caracter);
-
-    if (caracter==")"){
-
-        caracter=desapilar(&mipila);
-
-        if (caracter==")"){
-            desapilar_y_evaluar(mipila);
-        }
-        else{
-            while ( ((!pila_vacia(mipila)) || (caracter!="(")) ) {
-                printf(">Primer while. Desapile. Caracter=%s. Creo lista.\n",caracter);
-                lista_t milista=lista_crear();
-                while ( (caracter!="(") && (caracter!=")") && (caracter!="+") &&(caracter!="*")&&(caracter!="-")&&(caracter!="/")){
-                    printf(">Seg while. Caracter=%s\n",caracter);
-                    int num=atoi(caracter);
-                    printf(">Seg while. Converti a Int. Num=%d \n",num);
-                    lista_adjuntar(milista,num);
-                    printf(">Seg while. Enliste Num=%d \n",num);
-                    caracter=desapilar(&mipila);
-                    printf(">Seg while. Desapile: Caracter=%s \n",caracter);
-                }
-                printf(">Primer while. Antes de Switch. Caracter (deberia ser operador)=%s \n",caracter);
-                if (caracter=="+")resultado=suma(milista);
-                if (caracter=="*") resultado=producto(milista);
-                if (caracter=="/") resultado=division(milista);
-                if (caracter=="-") resultado=resta(milista);
-                printf(">Primer while. Despues de Switch.\n\n ||||||||||||||||||||||Resultado:%d||||||||||||||||||\n\n",resultado);
-                caracter=desapilar(&mipila);
-                printf(">Primer while. Despues de resultado. Desapile: Caracter[deberia ser '(']= %s \n",caracter);
-                char* res_cadena=itoa(resultado,res_cadena);
-                printf(">Primer while. Despues de ITOA. Res Cadena=%s \n",res_cadena);
-                apilar(&mipila,res_cadena);
-                printf(">Apile. Res-Cadena=%s | Cadena=%s \n",res_cadena,caracter);
-                }
-            }
-    }
-
-}
-
-*/
 
 void apilar_cadena(char* cadena){
 
     pila_t mipila=pila_crear();
 
-    char* num=malloc(CADENA_MAX);
     int largo=strlen(cadena);
     int i=0;
     int j;
@@ -287,7 +233,6 @@ void apilar_cadena(char* cadena){
                     exit (OPRD_INV);
 
             }
-            printf("\n>Tope: %s\n", tope(mipila) );
         }
         else{
             //Aumento i cuando el caracter es un espacio
@@ -296,18 +241,47 @@ void apilar_cadena(char* cadena){
     }
     if(cont_parentesis!=0) exit(EXP_MALF);
 
-    int resultado=desapilar_y_evaluar(mipila);
-
-    printf("@@@@@@@@ RESULTADO = %d @@@@@@@@@",resultado);
+    int resultado;
+    resultado=desapilar_y_evaluar(mipila);
+    printf("%d\n",resultado);
 }
 
+void mostrar_ayuda(){
+    printf("El programa evalúa expresiones aritméticas por entrada estándar interpretadas en preorden.\n");
+    printf("Las expresiones aritméticas son suma, resta, división y multiplicación.\n\n");
+    printf("Las expresiones aritméticas utilizan la siguiente sintaxis:\n");
+    printf("(<operador> <operando1> <operando2> ... <operandoN>)\n");
+    printf("Donde un <operandoI> puede ser de la forma:\n");
+    printf("(<operando>)\n");
+    printf("Con <operando> un número entero, que va a ser procesado como <operando> sin importar\n");
+    printf("la cantidad de parentesis que lo rodea, siempre y cuando los parentesis esten bien formados.\n\n");
+    printf("Todas las operaciones deben recibir al menos dos operandos para poder ser evaluadas.\n");
+    printf("Las operaciones suma y multiplicación pueden recibir más de dos operandos.\n\n");
+    printf("Un caso especial de expresion a evaluar es:\n");
+    printf("(<operando>)\n");
+    printf("Donde <operando> es un número entero, y es el mismo resultado de la expresión.\n\n");
+    printf("El parámetro -h muestra esta ayuda.\n");
+}
 
 int main(int argc, char** argv){
+    int argumento;
+    while ((argumento = getopt (argc, argv, "h")) != -1){
+        switch (argumento){
+            case 'h':{
+                mostrar_ayuda();
+                exit(0);
+            }
+            default: {
+                printf("Argumentos incorrectos\n");
+                mostrar_ayuda();
+                exit(0);
+            }
+        }
+    }
     char *cadena = malloc (CADENA_MAX);
+    printf("Ingrese la expresión\n");
     fgets (cadena, CADENA_MAX, stdin);
-
-    printf("Cadena leida: %s\n",cadena);
-
     apilar_cadena(cadena);
+    printf("\nFin del programa\n");
     return 0;
 }
