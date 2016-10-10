@@ -16,7 +16,7 @@ typedef struct lista_eficiente {
 //Retorna una nueva lista vacia
 lista_t lista_crear();
 
-//Inserto un elemento en una posicion pasada como parametro
+//Inserto un elemento en una posición pasada como parametro
 //Si la posicion es mayor a la cantidad de elementos, finaliza la ejecucion con error LST_POS_INV
 //Si la posicion es igual a la cantidad de elementos, inserto al final.
 int lista_insertar(lista_t lista, unsigned int pos, int elem);
