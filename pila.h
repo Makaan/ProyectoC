@@ -10,7 +10,7 @@ typedef struct pila {
 pila_t  pila_crear();
 
 /**Retorna el string que se encuentra en el tope de la pila. Si la
-pila se enceuntra vacia, aborta su ejecucion con exit status PIL_VACIA**/
+pila se encuentra vacia, aborta su ejecucion con exit status PIL_VACIA**/
 char* tope(pila_t pila);
 
 /**Elimina el string que se encuentra en el tope de la pila y lo retorna. Si la
