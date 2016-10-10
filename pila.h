@@ -22,7 +22,7 @@ falso en caso contrario. Si la pila no se encuentra inicializada, finaliza la ej
 exit status PIL_NO_INI**/
 int apilar(pila_t* pila, char* str);
 
-/**Retorna verdadero si la pila esta vacia, falso en caso contrario. Si la pila
+/**Retorna verdadero si la pila esta vacia, falso (0) en caso contrario. Si la pila
 no se encuentra inicializada, finaliza la ejecucion con exit status PIL_NO_INI**/
 int pila_vacia(pila_t pila);
 
