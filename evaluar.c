@@ -4,8 +4,6 @@
 #include <getopt.h>
 #include "lista.h"
 #include "pila.h"
-#include "lista.c"
-#include "pila.c"
 
 #define CADENA_MAX 512
 
@@ -207,7 +205,7 @@ void desapilar_y_evaluar(pila_t pila){
         }
         else{
             //Si hay un ')' en el tope de la pila auxiliar entonces la cantidad de operadores es insuficientes
-            if (strcmp(tope(pila_aux),")")) exit(OPND_INSUF);
+            //if (strcmp(tope(pila_aux),")")) exit(OPND_INSUF);
             //Creo la lista para luego insertarle los enteros a evaluar
             lista_t milista=lista_crear();
             while(strcmp(tope(pila_aux),")")!=0){
@@ -229,7 +227,7 @@ void desapilar_y_evaluar(pila_t pila){
             char* resultado_aux=malloc(CADENA_MAX);
             resultado_aux=itoa(resultado,resultado_aux);
             apilar(&pila_aux,resultado_aux);
-
+            free(resultado_aux);
             //Desapilo el '(' de la pila original
             desapilar(&pila);
 
@@ -239,6 +237,8 @@ void desapilar_y_evaluar(pila_t pila){
     //Desapilo el resutado final y lo convierto a entero para mostrarlo
     int toreturn=atoi(desapilar(&pila_aux));
     //Imprimo por pantalla el resultado final
+    free(caracter);
+    free(caracter_aux);
     printf("%d\n",toreturn);
 }
 
@@ -292,6 +292,7 @@ void apilar_cadena(char* cadena){
                     exit (OPND_INV);
                 //Apilo el numero
                 apilar(&mipila,num);
+                free(num);
             }
             else{
                  //Apilo el caracter valido que no es numero
@@ -309,6 +310,7 @@ void apilar_cadena(char* cadena){
             //Aumento i cuando el caracter es un espacio
             i++;
         }
+        
     }
     //Si la cantidad de parentesis no es la correcta salgo con el error correspondiente
     if(cont_parentesis!=0) exit(EXP_MALF);
@@ -353,6 +355,7 @@ int main(int argc, char** argv){
     printf("Ingrese la expresión\n");
     fgets (cadena, CADENA_MAX, stdin);
     apilar_cadena(cadena);
+    free(cadena);
     printf("\nFin del programa\n");
     return 0;
 }
