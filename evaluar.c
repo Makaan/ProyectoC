@@ -14,7 +14,7 @@ const int OPND_INV=7;
 const int OPRD_INV=8;
 
 
-//Codigo obtenido de: http://stackoverflow.com/a/9660930"
+//Codigo obtenido de: http://stackoverflow.com/a/9660930
 char* itoa(int i, char b[]){
     char const digit[] = "0123456789";
     char* p = b;
@@ -62,22 +62,6 @@ int caracter_valido(char caracter){
         case '(': toreturn=1;
     }
     return toreturn;
-}
-
-/**
-Funcion que retorna un string equivalente al caracter pasado por parametro
-Retorna una string equivalente al caracter caracter.
-**/
-char* obtener_cadena(char caracter){
-    //Reservo espacio para la string que voy a retornar.
-    char* cadena=malloc(CADENA_MAX);
-    if (caracter=='+') cadena="+";
-    if (caracter=='-') cadena="-";
-    if (caracter=='*') cadena="*";
-    if (caracter=='/') cadena="/";
-    if (caracter==')') cadena=")";
-    if (caracter=='(') cadena="(";
-    return cadena;
 }
 
 /**
@@ -172,10 +156,10 @@ Metodo que toma una pila con los elementos de la expresion ya apilados y la eval
 El resultado final se imprime por pantalla
 **/
 void desapilar_y_evaluar(pila_t pila){
-    //Reservo memoria para los string que voy a utilizar
-    char* caracter=malloc(CADENA_MAX);
-    char* caracter_aux=malloc(CADENA_MAX);
-
+    
+    char* caracter;
+    char* caracter_aux;
+    
     int resultado=0;
     //Creo la pila auxiliar
     pila_t pila_aux=pila_crear();
@@ -191,12 +175,16 @@ void desapilar_y_evaluar(pila_t pila){
                 if (strcmp(tope(pila_aux),")")==0){
                     //Desapilo el ')' de la pila auxiliar para luego apilar de nuevo el entero
                     //y asi eleminar todos los parentesis que rodean al entero
-                    desapilar(&pila_aux);
+                    char* toFree=desapilar(&pila_aux);
+                    printf("toFree %lu %s\n", toFree,toFree);
+                    free(toFree);
                     apilar(&pila_aux,caracter_aux);
                 }
                 else{
                     exit(OPRD_INV);
                 }
+                printf("caracter %lu %s\n", caracter,caracter);
+                free(caracter);
             }
             else{
                 //Si no tengo un entero rodeado de parentesis lo apilo en la pila auxiliar
@@ -213,6 +201,8 @@ void desapilar_y_evaluar(pila_t pila){
                 //Sigo desapilando enteros y insertandolos a la lista
                 caracter_aux=desapilar(&pila_aux);
                 int num=atoi(caracter_aux);
+                printf("caracter_aux %lu %s\n", caracter_aux,caracter_aux);
+                free(caracter_aux);
                 lista_adjuntar(milista,num);
             }
             //Desapilo el ')' de la pila auxiliar
@@ -222,23 +212,27 @@ void desapilar_y_evaluar(pila_t pila){
             if (strcmp(caracter,"*")==0) resultado=producto(milista);
             if (strcmp(caracter,"/")==0) resultado=division(milista);
             if (strcmp(caracter,"-")==0) resultado=resta(milista);
-
+            printf("caracter %lu %s\n", caracter,caracter);
+            free(caracter);
             //Convierto el resultado de las funciones de entero a string para luego apilarlo en la pila auxiliar
             char* resultado_aux=malloc(CADENA_MAX);
             resultado_aux=itoa(resultado,resultado_aux);
             apilar(&pila_aux,resultado_aux);
-            free(resultado_aux);
             //Desapilo el '(' de la pila original
-            desapilar(&pila);
+            char* toFree=desapilar(&pila);
+            printf("toFree %lu %s\n", toFree,toFree);
+            free(toFree);
+            
 
         }
     }
     //Aca el unico elemento de la pila auxiliar es el resultado final
     //Desapilo el resutado final y lo convierto a entero para mostrarlo
-    int toreturn=atoi(desapilar(&pila_aux));
+    char* resuFinal=desapilar(&pila_aux);
+    int toreturn=atoi(resuFinal);
+    printf("resultado %lu %s\n", resuFinal,resuFinal);
+    free(resuFinal);
     //Imprimo por pantalla el resultado final
-    free(caracter);
-    free(caracter_aux);
     printf("%d\n",toreturn);
 }
 
@@ -292,15 +286,16 @@ void apilar_cadena(char* cadena){
                     exit (OPND_INV);
                 //Apilo el numero
                 apilar(&mipila,num);
-                free(num);
             }
             else{
                  //Apilo el caracter valido que no es numero
-                 if (caracter_valido(*(cadena+i))){
-                    char c=(*(cadena+i));
-                    apilar(&mipila,obtener_cadena(c));
+                 if (caracter_valido(*(cadena+i))) {
+                    char* paraApilar=malloc(sizeof(char));
+                    *paraApilar=(*(cadena+i));
+                    apilar(&mipila,paraApilar);
                     i++;
-                 }else
+                 }
+                 else
                     //Si el caracter no es valido salgo con el error correspondiente
                     exit (OPRD_INV);
 
