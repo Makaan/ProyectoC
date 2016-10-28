@@ -136,8 +136,9 @@ int lista_adjuntar(lista_t lista, int elem) {
 //Metodo recursivo que recorre todas las celdas y les hace free cuando vuelve de la recursion
 void destruir(celda_t* celda) {
 	//Si hay mas celdas llamo recursivamente
+	printf("Destruir. Celda: %u %u %d\n",celda,(celda->proxima_celda),(celda->proxima_celda!=NULL));
 	if((celda->proxima_celda)!=NULL){
-        printf("Destruir. Celda: %u %u %d\n",celda,(celda->proxima_celda),(celda->proxima_celda!=NULL));
+    printf("llamo recursivamente\n");   
 		destruir(celda->proxima_celda);
     }
     printf("x\n");
