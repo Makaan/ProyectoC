@@ -24,10 +24,10 @@ lista_t lista_crear() {
 //Si la posicion es mayor a la cantidad de elementos, finaliza la ejecucion con error LST_POS_INV
 //Si la posicion es igual a la cantidad de elementos, inserto al final.
 int lista_insertar(lista_t lista, unsigned int pos, int elem) {
-	//Si la posicion es mayor que la cantidad de elementos retorna falso.
+	//Si la posicion es mayor que la cantidad de elementos salgo con error de posicion invalida.
 	if(pos>lista->cantidad_elementos)
-		return 0;
-
+		exit(LST_POS_INV);
+		
 	//Obtengo la celda donde debo insertar.
 	int posCelda=pos/4;
 	celda_t* celda_actual=lista->primera_celda;
@@ -38,7 +38,9 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 		//Si esa celda no existe la creo.
 		if((celda_actual->proxima_celda)==NULL) {
 			celda_t* nuevaCelda=(celda_t*)malloc(sizeof(celda_t));
+			nuevaCelda->proxima_celda=NULL;
 			celda_actual->proxima_celda=nuevaCelda;
+			
 		}
 		celda_actual=celda_actual->proxima_celda;
 	}
@@ -103,6 +105,11 @@ int lista_cantidad(lista_t lista) {
 //Retorna el elemento en la posicion pasada como parametro
 //Si la posicion es mayor a la cantidad de elementos de la lista finaliza la ejecucion con error LST_POS_INV
 int lista_obtener(lista_t lista, unsigned int pos) {
+	
+	//Si la lista no esta inicializada salgo con error.
+	if(lista==NULL){
+		exit(LST_NO_INI);
+	}
 	//Si la posicion no es valida corta la ejecucion con error.
 	if(pos>(lista->cantidad_elementos-1)) {
 		exit(LST_POS_INV);
@@ -141,5 +148,6 @@ int lista_destruir(lista_t* lista) {
 	//Lamo recursivamente para liberar el espacio de las celdas.
 	destruir(celda);
 	free(*lista);
-	return 1;
+	
+	return 0;
 }
