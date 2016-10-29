@@ -32,15 +32,17 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 	int posCelda=pos/4;
 	if(lista->primera_celda==NULL) {
         lista->primera_celda=(celda_t*) malloc(sizeof(celda_t));
+        lista->primera_celda->proxima_celda=NULL;
 	}
 	celda_t* celda_actual=lista->primera_celda;
-
 	//Recorro hasta encontrar la celda donde agregar.
 	int i;
 	for(i=0;i<posCelda;i++) {
 		//Si esa celda no existe la creo.
+		printf("--sig null? %d\n",(celda_actual->proxima_celda==NULL));
 		if((celda_actual->proxima_celda)==NULL) {
 			celda_t* nuevaCelda=(celda_t*)malloc(sizeof(celda_t));
+			printf("---creo una nueva celda %u es sig null? %d\n",nuevaCelda,(celda_actual->proxima_celda==NULL));
 			nuevaCelda->proxima_celda=NULL;
 			celda_actual->proxima_celda=nuevaCelda;
 
@@ -51,10 +53,10 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 	int posArreglo=pos%4;
 	if(pos==(lista->cantidad_elementos))
 		lista->cantidad_elementos++;
-
+    printf("inserte en la celda %u el elem %d en pos %d\n",celda_actual,elem,posArreglo);
 	celda_actual->elementos[posArreglo]=elem;
 
-    printf("lista_insertar\n");
+
 	return 0;
 }
 
@@ -138,11 +140,15 @@ void destruir(celda_t* celda) {
 	//Si hay mas celdas llamo recursivamente
 	printf("Destruir. Celda: %u %u %d\n",celda,(celda->proxima_celda),(celda->proxima_celda!=NULL));
 	if((celda->proxima_celda)!=NULL){
-    printf("llamo recursivamente\n");   
+    printf("llamo recursivamente\n");
 		destruir(celda->proxima_celda);
     }
     printf("x\n");
+    printf("celda sig antes de nulificar %u\n",celda->proxima_celda);
+    celda->proxima_celda=NULL;
+    printf("celda sig des de nulificar %u\n",celda->proxima_celda);
 	free(celda);
+	celda=NULL;
 }
 
 //Agrego un elemento al final de la lista
@@ -158,6 +164,7 @@ int lista_destruir(lista_t* lista) {
 	destruir(celda);
 	printf("Despues de destruir en lista\n");
 	free(*lista);
+	*lista=NULL;
 
 	return 0;
 }
