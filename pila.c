@@ -50,13 +50,13 @@ int apilar(pila_t* pila, char* str){
    if(pila==NULL) {
       exit(PIL_NO_INI);
    }
-   int toreturn=0;
+   int toreturn=1;
    if (str!=NULL){
       pila_t nueva=(pila_t)malloc(sizeof(pila_t));
       nueva->elemento=str;
       nueva->proximo_elemento=(*pila);
       (*pila)=nueva;
-      toreturn=1;
+      toreturn=0;
     }
    return toreturn;
 }

@@ -15,7 +15,7 @@ lista_t lista_crear() {
 
   //Creo la lista.
 	lista->cantidad_elementos=0;
-	lista->primera_celda=malloc(sizeof(celda_t));
+	lista->primera_celda=NULL;
 
   return lista;
 }
@@ -27,9 +27,12 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 	//Si la posicion es mayor que la cantidad de elementos salgo con error de posicion invalida.
 	if(pos>lista->cantidad_elementos)
 		exit(LST_POS_INV);
-		
+
 	//Obtengo la celda donde debo insertar.
 	int posCelda=pos/4;
+	if(lista->primera_celda==NULL) {
+        lista->primera_celda=(celda_t*) malloc(sizeof(celda_t));
+	}
 	celda_t* celda_actual=lista->primera_celda;
 
 	//Recorro hasta encontrar la celda donde agregar.
@@ -40,7 +43,7 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 			celda_t* nuevaCelda=(celda_t*)malloc(sizeof(celda_t));
 			nuevaCelda->proxima_celda=NULL;
 			celda_actual->proxima_celda=nuevaCelda;
-			
+
 		}
 		celda_actual=celda_actual->proxima_celda;
 	}
@@ -51,8 +54,8 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 
 	celda_actual->elementos[posArreglo]=elem;
 
-
-	return 1;
+    printf("lista_insertar\n");
+	return 0;
 }
 
 //Elimina un elemento de la lista segun la posicion pasada como parametro
@@ -105,7 +108,7 @@ int lista_cantidad(lista_t lista) {
 //Retorna el elemento en la posicion pasada como parametro
 //Si la posicion es mayor a la cantidad de elementos de la lista finaliza la ejecucion con error LST_POS_INV
 int lista_obtener(lista_t lista, unsigned int pos) {
-	
+
 	//Si la lista no esta inicializada salgo con error.
 	if(lista==NULL){
 		exit(LST_NO_INI);
@@ -126,14 +129,19 @@ int lista_obtener(lista_t lista, unsigned int pos) {
 int lista_adjuntar(lista_t lista, int elem) {
 	//Uso el metodo lista_insertar con la cantidad de elementos de la lista como posicion
 	int to_return=lista_insertar(lista,(lista->cantidad_elementos),elem);
+	printf("lista %u size %d elem %d\n",lista,lista_cantidad(lista),elem );
 	return to_return;
 }
 
 //Metodo recursivo que recorre todas las celdas y les hace free cuando vuelve de la recursion
 void destruir(celda_t* celda) {
 	//Si hay mas celdas llamo recursivamente
-	if(celda->proxima_celda!=NULL)
+	printf("Destruir. Celda: %u %u %d\n",celda,(celda->proxima_celda),(celda->proxima_celda!=NULL));
+	if((celda->proxima_celda)!=NULL){
+    printf("llamo recursivamente\n");   
 		destruir(celda->proxima_celda);
+    }
+    printf("x\n");
 	free(celda);
 }
 
@@ -146,8 +154,10 @@ int lista_destruir(lista_t* lista) {
 	//Obtengo la primera celda.
 	celda_t* celda=(*lista)->primera_celda;
 	//Lamo recursivamente para liberar el espacio de las celdas.
+	printf("Antes de destruir en lista\n");
 	destruir(celda);
+	printf("Despues de destruir en lista\n");
 	free(*lista);
-	
+
 	return 0;
 }

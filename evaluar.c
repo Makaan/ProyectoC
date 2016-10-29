@@ -70,6 +70,7 @@ Retorna la suma de todos los elementos de la lista lista.
 Si la cantidad de elementos de la lista es menor a 2, el programa sale con error OPND_INSUF.
 **/
 int suma(lista_t lista){
+    printf("Entre a lista para sumar\n");
     int resultado=0;
     int i;
     int cant=lista_cantidad(lista);
@@ -78,10 +79,13 @@ int suma(lista_t lista){
     if (cant<2) exit(OPND_INSUF);
 
     for (i=0;i<cant;i++){
+        printf("Antes de lista obtener\n");
         resultado=resultado+lista_obtener(lista,i);
     }
     //Destruyo la lista luego calcular el resultado
+    printf("Antes de lista destruir. Elementos=%d\n",cant);
     lista_destruir(&lista);
+    printf("Antes de salir de lista para sumar\n");
     return resultado;
 }
 
@@ -156,10 +160,10 @@ Metodo que toma una pila con los elementos de la expresion ya apilados y la eval
 El resultado final se imprime por pantalla
 **/
 void desapilar_y_evaluar(pila_t pila){
-    
+
     char* caracter;
     char* caracter_aux;
-    
+
     int resultado=0;
     //Creo la pila auxiliar
     pila_t pila_aux=pila_crear();
@@ -176,14 +180,14 @@ void desapilar_y_evaluar(pila_t pila){
                     //Desapilo el ')' de la pila auxiliar para luego apilar de nuevo el entero
                     //y asi eleminar todos los parentesis que rodean al entero
                     char* toFree=desapilar(&pila_aux);
-                    printf("toFree %lu %s\n", toFree,toFree);
+                    printf("Free: toFree %d %s\n", toFree,toFree);
                     free(toFree);
                     apilar(&pila_aux,caracter_aux);
                 }
                 else{
                     exit(OPRD_INV);
                 }
-                printf("caracter %lu %s\n", caracter,caracter);
+                printf("Free: caracter %d %s\n", caracter,caracter);
                 free(caracter);
             }
             else{
@@ -192,37 +196,40 @@ void desapilar_y_evaluar(pila_t pila){
             }
         }
         else{
-            //Si hay un ')' en el tope de la pila auxiliar entonces la cantidad de operadores es insuficientes
-            //if (strcmp(tope(pila_aux),")")) exit(OPND_INSUF);
             //Creo la lista para luego insertarle los enteros a evaluar
+
             lista_t milista=lista_crear();
+            printf("Creé lista: milista %d\n", milista);
             while(strcmp(tope(pila_aux),")")!=0){
                 //Mintras no haya un ')' en el tope de pila auxiliar
                 //Sigo desapilando enteros y insertandolos a la lista
                 caracter_aux=desapilar(&pila_aux);
                 int num=atoi(caracter_aux);
-                printf("caracter_aux %lu %s\n", caracter_aux,caracter_aux);
+                printf("Free: caracter_aux %d %s\n", caracter_aux,caracter_aux);
                 free(caracter_aux);
                 lista_adjuntar(milista,num);
             }
             //Desapilo el ')' de la pila auxiliar
-            desapilar(&pila_aux);
+            char* toFree=desapilar(&pila_aux);
+            printf("Free: toFree %d %s\n", toFree,toFree);
+            free(toFree);
+            printf("Antes de entrar a los if con las listas. Caracter=%s\n",caracter);
             //Dependiendo de el operando llamo a cada funcion con la lista de enteros
             if (strcmp(caracter,"+")==0) resultado=suma(milista);
             if (strcmp(caracter,"*")==0) resultado=producto(milista);
             if (strcmp(caracter,"/")==0) resultado=division(milista);
             if (strcmp(caracter,"-")==0) resultado=resta(milista);
-            printf("caracter %lu %s\n", caracter,caracter);
+            printf("Free: caracter %d %s\n", caracter,caracter);
             free(caracter);
             //Convierto el resultado de las funciones de entero a string para luego apilarlo en la pila auxiliar
             char* resultado_aux=malloc(CADENA_MAX);
             resultado_aux=itoa(resultado,resultado_aux);
             apilar(&pila_aux,resultado_aux);
             //Desapilo el '(' de la pila original
-            char* toFree=desapilar(&pila);
-            printf("toFree %lu %s\n", toFree,toFree);
+            toFree=desapilar(&pila);
+            printf("Free: toFree %d %s\n", toFree,toFree);
             free(toFree);
-            
+
 
         }
     }
@@ -230,10 +237,12 @@ void desapilar_y_evaluar(pila_t pila){
     //Desapilo el resutado final y lo convierto a entero para mostrarlo
     char* resuFinal=desapilar(&pila_aux);
     int toreturn=atoi(resuFinal);
-    printf("resultado %lu %s\n", resuFinal,resuFinal);
+    printf("Free: resuFinal %d %s\n", resuFinal,resuFinal);
     free(resuFinal);
     //Imprimo por pantalla el resultado final
     printf("%d\n",toreturn);
+    //printf("Pila vacia? %d\n",pila_vacia(pila));
+    //printf("Pila_aux vacia? %d\n",pila_vacia(pila_aux));
 }
 
 /**
@@ -285,6 +294,7 @@ void apilar_cadena(char* cadena){
                     //Si el operando no es un entero salgo con el error correspondiente
                     exit (OPND_INV);
                 //Apilo el numero
+                printf("Apilo: num %d %s\n", num,num);
                 apilar(&mipila,num);
             }
             else{
@@ -292,6 +302,7 @@ void apilar_cadena(char* cadena){
                  if (caracter_valido(*(cadena+i))) {
                     char* paraApilar=malloc(sizeof(char));
                     *paraApilar=(*(cadena+i));
+                    printf("Apilo: paraApilar %d %s\n", paraApilar,paraApilar);
                     apilar(&mipila,paraApilar);
                     i++;
                  }
@@ -305,7 +316,7 @@ void apilar_cadena(char* cadena){
             //Aumento i cuando el caracter es un espacio
             i++;
         }
-        
+
     }
     //Si la cantidad de parentesis no es la correcta salgo con el error correspondiente
     if(cont_parentesis!=0) exit(EXP_MALF);
@@ -354,3 +365,4 @@ int main(int argc, char** argv){
     printf("\nFin del programa\n");
     return 0;
 }
+
