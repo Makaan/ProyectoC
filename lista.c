@@ -72,7 +72,7 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 	}
 	//Obtengo la posicion del arreglo de esa celda donde eliminar.
 	int posArreglo=pos%4;
-
+	printf("arreglo %d elem %d\n",posArreglo,(celda_actual->elementos[posArreglo]));
 	//Acomodo todos los elementos restantes del arreglo para cerrar el espacio creado por elemento eliminado.
 	while(pos<lista->cantidad_elementos) {
 		//Muevo cada elemento i+1 al i en el arreglo de la celda.
@@ -88,7 +88,7 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 		}
 	}
 	lista->cantidad_elementos--;
-	return 1;
+	return 0;
 
 }
 
