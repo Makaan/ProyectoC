@@ -39,10 +39,8 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 	int i;
 	for(i=0;i<posCelda;i++) {
 		//Si esa celda no existe la creo.
-		printf("--sig null? %d\n",(celda_actual->proxima_celda==NULL));
 		if((celda_actual->proxima_celda)==NULL) {
 			celda_t* nuevaCelda=(celda_t*)malloc(sizeof(celda_t));
-			printf("---creo una nueva celda %u es sig null? %d\n",nuevaCelda,(celda_actual->proxima_celda==NULL));
 			nuevaCelda->proxima_celda=NULL;
 			celda_actual->proxima_celda=nuevaCelda;
 
@@ -53,7 +51,6 @@ int lista_insertar(lista_t lista, unsigned int pos, int elem) {
 	int posArreglo=pos%4;
 	if(pos==(lista->cantidad_elementos))
 		lista->cantidad_elementos++;
-    printf("inserte en la celda %u el elem %d en pos %d\n",celda_actual,elem,posArreglo);
 	celda_actual->elementos[posArreglo]=elem;
 
 
@@ -77,7 +74,6 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 	}
 	//Obtengo la posicion del arreglo de esa celda donde eliminar.
 	int posArreglo=pos%4;
-	printf("arreglo %d elem %d\n",posArreglo,(celda_actual->elementos[posArreglo]));
 	//Acomodo todos los elementos restantes del arreglo para cerrar el espacio creado por elemento eliminado.
 	while(pos<lista->cantidad_elementos) {
 		//Muevo cada elemento i+1 al i en el arreglo de la celda.
@@ -132,22 +128,16 @@ int lista_obtener(lista_t lista, unsigned int pos) {
 int lista_adjuntar(lista_t lista, int elem) {
 	//Uso el metodo lista_insertar con la cantidad de elementos de la lista como posicion
 	int to_return=lista_insertar(lista,(lista->cantidad_elementos),elem);
-	printf("lista %u size %d elem %d\n",lista,lista_cantidad(lista),elem );
 	return to_return;
 }
 
 //Metodo recursivo que recorre todas las celdas y les hace free cuando vuelve de la recursion
 void destruir(celda_t* celda) {
 	//Si hay mas celdas llamo recursivamente
-	printf("Destruir. Celda: %u %u %d\n",celda,(celda->proxima_celda),(celda->proxima_celda!=NULL));
 	if((celda->proxima_celda)!=NULL){
-    printf("llamo recursivamente\n");
 		destruir(celda->proxima_celda);
     }
-    printf("x\n");
-    printf("celda sig antes de nulificar %u\n",celda->proxima_celda);
     celda->proxima_celda=NULL;
-    printf("celda sig des de nulificar %u\n",celda->proxima_celda);
 	free(celda);
 	celda=NULL;
 }
@@ -161,9 +151,7 @@ int lista_destruir(lista_t* lista) {
 	//Obtengo la primera celda.
 	celda_t* celda=(*lista)->primera_celda;
 	//Lamo recursivamente para liberar el espacio de las celdas.
-	printf("Antes de destruir en lista\n");
 	destruir(celda);
-	printf("Despues de destruir en lista\n");
 	free(*lista);
 	*lista=NULL;
 

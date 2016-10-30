@@ -28,19 +28,15 @@ char* desapilar(pila_t* pila){
    if (pila_vacia(*pila)){
         exit(PIL_VACIA);
    }
-   else{
-        tofree=(*pila);
-        aux=(*pila)->elemento;
+   tofree=(*pila);
+   aux=(*pila)->elemento;
+    if (((*pila)->proximo_elemento)!=NULL)
+        (*pila)=((*pila)->proximo_elemento);
+    else
+        (*pila)=NULL;
 
-        if (((*pila)->proximo_elemento)!=NULL)
-            (*pila)=((*pila)->proximo_elemento);
-        else
-            (*pila)=NULL;
-
-        free(tofree);
-        return aux;
-    }
-
+    free(tofree);
+    return aux;
 }
 
 /**Inserta el string str en el tope de la pila. Retorna verdadero si la insercion fue exitosa,
