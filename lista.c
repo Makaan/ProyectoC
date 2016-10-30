@@ -81,7 +81,7 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 	//Acomodo todos los elementos restantes del arreglo para cerrar el espacio creado por elemento eliminado.
 	while(pos<lista->cantidad_elementos) {
 		//Muevo cada elemento i+1 al i en el arreglo de la celda.
-		for(;posArreglo<4 && (pos<lista->cantidad_elementos);posArreglo++) {
+		for(;posArreglo<3 && (pos<lista->cantidad_elementos);posArreglo++) {
 			celda_actual->elementos[posArreglo]=celda_actual->elementos[posArreglo+1];
 			pos++;
 		}
@@ -90,6 +90,7 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 			celda_actual->elementos[3]=celda_actual->proxima_celda->elementos[0];
 			celda_actual=celda_actual->proxima_celda;
 			posArreglo=0;
+            pos++;
 		}
 	}
 	lista->cantidad_elementos--;
