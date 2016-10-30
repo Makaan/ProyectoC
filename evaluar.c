@@ -180,14 +180,14 @@ void desapilar_y_evaluar(pila_t pila){
                     //Desapilo el ')' de la pila auxiliar para luego apilar de nuevo el entero
                     //y asi eleminar todos los parentesis que rodean al entero
                     char* toFree=desapilar(&pila_aux);
-                    printf("Free: toFree %d %s\n", toFree,toFree);
+                    //printf("Free: toFree %d %s\n", toFree,toFree);
                     free(toFree);
                     apilar(&pila_aux,caracter_aux);
                 }
                 else{
                     exit(OPRD_INV);
                 }
-                printf("Free: caracter %d %s\n", caracter,caracter);
+                //printf("Free: caracter %d %s\n", caracter,caracter);
                 free(caracter);
             }
             else{
@@ -205,21 +205,22 @@ void desapilar_y_evaluar(pila_t pila){
                 //Sigo desapilando enteros y insertandolos a la lista
                 caracter_aux=desapilar(&pila_aux);
                 int num=atoi(caracter_aux);
-                printf("Free: caracter_aux %d %s\n", caracter_aux,caracter_aux);
+                //printf("Free: caracter_aux %d %s\n", caracter_aux,caracter_aux);
                 free(caracter_aux);
+                printf("adjunto en la lista %u %d size de lista %d\n",milista, num, lista_cantidad(milista));
                 lista_adjuntar(milista,num);
             }
             //Desapilo el ')' de la pila auxiliar
             char* toFree=desapilar(&pila_aux);
-            printf("Free: toFree %d %s\n", toFree,toFree);
+            //printf("Free: toFree %d %s\n", toFree,toFree);
             free(toFree);
-            printf("Antes de entrar a los if con las listas. Caracter=%s\n",caracter);
+            //printf("Antes de entrar a los if con las listas. Caracter=%s\n",caracter);
             //Dependiendo de el operando llamo a cada funcion con la lista de enteros
             if (strcmp(caracter,"+")==0) resultado=suma(milista);
             if (strcmp(caracter,"*")==0) resultado=producto(milista);
             if (strcmp(caracter,"/")==0) resultado=division(milista);
             if (strcmp(caracter,"-")==0) resultado=resta(milista);
-            printf("Free: caracter %d %s\n", caracter,caracter);
+            //printf("Free: caracter %d %s\n", caracter,caracter);
             free(caracter);
             //Convierto el resultado de las funciones de entero a string para luego apilarlo en la pila auxiliar
             char* resultado_aux=malloc(CADENA_MAX);
@@ -227,7 +228,7 @@ void desapilar_y_evaluar(pila_t pila){
             apilar(&pila_aux,resultado_aux);
             //Desapilo el '(' de la pila original
             toFree=desapilar(&pila);
-            printf("Free: toFree %d %s\n", toFree,toFree);
+            //printf("Free: toFree %d %s\n", toFree,toFree);
             free(toFree);
 
 
@@ -237,7 +238,7 @@ void desapilar_y_evaluar(pila_t pila){
     //Desapilo el resutado final y lo convierto a entero para mostrarlo
     char* resuFinal=desapilar(&pila_aux);
     int toreturn=atoi(resuFinal);
-    printf("Free: resuFinal %d %s\n", resuFinal,resuFinal);
+    //printf("Free: resuFinal %d %s\n", resuFinal,resuFinal);
     free(resuFinal);
     //Imprimo por pantalla el resultado final
     printf("%d\n",toreturn);
