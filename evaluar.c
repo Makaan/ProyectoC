@@ -5,7 +5,7 @@
 #include "lista.h"
 #include "pila.h"
 
-#define CADENA_MAX 512
+#define CADENA_MAX 32
 
 const int EXP_MALF=2;
 const int OPND_DEMAS=5;
@@ -345,9 +345,9 @@ int main(int argc, char** argv){
             }
         }
     }
-    char *cadena = malloc (CADENA_MAX);
+    char *cadena = malloc (512);
     printf("Ingrese la expresión\n");
-    fgets (cadena, CADENA_MAX, stdin);
+    fgets (cadena, 512, stdin);
     apilar_cadena(cadena);
     free(cadena);
     printf("\nFin del programa\n");
