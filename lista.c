@@ -1,4 +1,3 @@
-//Lista.c
 #include <stdio.h>
 #include <stdlib.h>
 #include "lista.h"
@@ -86,7 +85,7 @@ int lista_eliminar(lista_t lista, unsigned int pos) {
 			celda_actual->elementos[3]=celda_actual->proxima_celda->elementos[0];
 			celda_actual=celda_actual->proxima_celda;
 			posArreglo=0;
-            pos++;
+      pos++;
 		}
 	}
 	lista->cantidad_elementos--;
@@ -107,7 +106,6 @@ int lista_cantidad(lista_t lista) {
 //Retorna el elemento en la posicion pasada como parametro
 //Si la posicion es mayor a la cantidad de elementos de la lista finaliza la ejecucion con error LST_POS_INV
 int lista_obtener(lista_t lista, unsigned int pos) {
-
 	//Si la lista no esta inicializada salgo con error.
 	if(lista==NULL){
 		exit(LST_NO_INI);
@@ -154,6 +152,6 @@ int lista_destruir(lista_t* lista) {
 	destruir(celda);
 	free(*lista);
 	*lista=NULL;
-
+	lista=NULL;
 	return 0;
 }

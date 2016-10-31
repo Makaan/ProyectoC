@@ -13,9 +13,8 @@ const int OPND_INSUF=6;
 const int OPND_INV=7;
 const int OPRD_INV=8;
 
-
-//Codigo obtenido de: http://stackoverflow.com/a/9660930
 /**
+Codigo obtenido de: http://stackoverflow.com/a/9660930
 Funcion que convierte un entero a una cadena de caracteres equivalente
 **/
 char* itoa(int i, char b[]){
